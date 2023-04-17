@@ -1,0 +1,51 @@
+#==============================================================================
+# Requirements
+# * Docker installed
+# * docker-compose installed
+#----------------------------------------------------------------------
+# Use
+# UID=${UID} GID=${GID} docker-compose -f docker-compose-dev.yml up -d
+#----------------------------------------------------------------------
+version: '3.8'
+#----------------------------------------------------------------------
+# Networks
+#----------------------------------------------------------------------
+networks:
+  gaming-library-net:
+    driver: bridge
+#----------------------------------------------------------------------
+# Volumes
+#----------------------------------------------------------------------
+volumes:
+  gaming-library-db-data: {}
+#----------------------------------------------------------------------
+# Services:
+#----------------------------------------------------------------------
+services:
+  gaming-library:
+    image: node:16-bullseye
+    container_name: gaming-library
+    working_dir: /usr/src/app
+    command: /usr/src/app/docker/docker-entrypoint.sh
+    user: '${DUID}:${DGID}'
+    volumes:
+      - '..:/usr/src/app:Z'
+    ports:
+      - '3000:3000'
+    networks:
+      - gaming-library-net
+    env_file:
+      - ./local.env
+    depends_on:
+      - gaming-library-db
+  gaming-library-db:
+    image: postgres:latest
+    container_name: gaming-library-db
+    ports:
+      - 5432:5432
+    networks:
+      - gaming-library-net
+    env_file:
+      - ./local.env
+    volumes:
+      - gaming-library-db-data:/var/lib/postgresql/data

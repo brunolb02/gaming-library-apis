@@ -1,0 +1,78 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             Int              @id @default(autoincrement())
+  createdAt      DateTime         @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt      DateTime         @updatedAt @map("updated_at") @db.Timestamptz(3)
+  username       String           @db.VarChar(256)
+  email          String           @unique @db.VarChar(256)
+  password       String           @db.VarChar()
+  CompletedGames CompletedGames[]
+  PlayingGames   PlayingGames[]
+  PendingGames   PendingGames[]
+
+  @@map("user")
+}
+
+model CompletedGames {
+  id              Int      @id @default(autoincrement())
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt       DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+  userId          Int      @map("user_id")
+  name            String   @db.VarChar(256)
+  description     String   @db.VarChar()
+  imageUrl        String   @default("default.png") @map("image_url") @db.VarChar()
+  releaseDate     DateTime @map("release_date") @db.Timestamptz(3)
+  completedDate   DateTime @default(now()) @map("completed_date") @db.Timestamptz(3)
+  metacriticScore String   @default("n/a") @map("metacritic_score") @db.VarChar(10)
+  userScore       String   @map("user_score") @db.VarChar(10)
+  totalTimeToBeat Int      @default(0) @map("total_time_to_beat") @db.Integer()
+  rank            Int      @db.Integer()
+  review          String   @db.VarChar()
+
+  User User @relation(fields: [userId], references: [id])
+
+  @@map("completed_games")
+}
+
+model PlayingGames {
+  id              Int      @id @default(autoincrement())
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt       DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+  userId          Int      @map("user_id")
+  name            String   @db.VarChar(256)
+  description     String   @db.VarChar()
+  imageUrl        String   @default("default.png") @map("image_url") @db.VarChar()
+  releaseDate     DateTime @map("release_date") @db.Timestamptz(3)
+  metacriticScore String   @default("n/a") @map("metacritic_score") @db.VarChar(10)
+  timeToBeat      Json     @map("time_to_beat")
+  startDate       DateTime @map("start_date") @db.Timestamptz(3)
+
+  User User @relation(fields: [userId], references: [id])
+
+  @@map("playing_games")
+}
+
+model PendingGames {
+  id              Int      @id @default(autoincrement())
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt       DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+  userId          Int      @map("user_id")
+  name            String   @db.VarChar(256)
+  description     String   @db.VarChar()
+  imageUrl        String   @default("default.png") @map("image_url") @db.VarChar()
+  releaseDate     DateTime @map("release_date") @db.Timestamptz(3)
+  metacriticScore String   @default("n/a") @map("metacritic_score") @db.VarChar(10)
+  timeToBeat      Json     @map("time_to_beat")
+
+  User User @relation(fields: [userId], references: [id])
+
+  @@map("pending_games")
+}
