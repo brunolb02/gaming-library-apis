@@ -1,32 +1,62 @@
-//src/auth/auth.service.ts
-import {
-  Injectable,
-  NotFoundException,
-  UnauthorizedException,
-} from '@nestjs/common';
-import { PrismaService } from './../prisma/prisma.service';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { AuthEntity } from './entities/auth.entity';
+import { UsersService } from '../users/users.service';
+import { CreateUserDTO } from '../users/dto/create-user.dto';
+import { LoginDTO } from './dto/login.dto';
+import { JwtPayload } from './jwt.strategy';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
-  constructor(private prisma: PrismaService, private jwtService: JwtService) {}
+  constructor(
+    private usersService: UsersService,
+    private jwtService: JwtService,
+    private configService: ConfigService,
+  ) {}
 
-  async login(email: string, password: string): Promise<AuthEntity> {
-    const user = await this.prisma.user.findUnique({ where: { email: email } });
+  async register(createUserDTO: CreateUserDTO): Promise<number> {
+    try {
+      await this.usersService.create(createUserDTO);
+
+      return HttpStatus.CREATED;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async login(loginDTO: LoginDTO): Promise<AuthEntity> {
+    const user = await this.usersService.findByLogin(loginDTO);
 
     if (!user) {
-      throw new NotFoundException(`No user found for email: ${email}`);
+      throw new HttpException('user_not_found', HttpStatus.NOT_FOUND);
     }
 
-    const isPasswordValid = user.password === password;
-
-    if (!isPasswordValid) {
-      throw new UnauthorizedException('Invalid password');
-    }
+    const accessToken = this.generateAccessToken(user);
 
     return {
-      accessToken: this.jwtService.sign({ userId: user.id }),
+      ...accessToken,
+      data: user,
+    };
+  }
+
+  async validateUser(payload: JwtPayload): Promise<any> {
+    const user = await this.usersService.findByPayload(payload);
+
+    if (!user) {
+      throw new HttpException('invalid_token', HttpStatus.UNAUTHORIZED);
+    }
+
+    return user;
+  }
+
+  private generateAccessToken({ email }): any {
+    const user: JwtPayload = { email };
+    const authorization = this.jwtService.sign(user);
+
+    return {
+      expiresIn: this.configService.getOrThrow('JWT_EXPIRATION_TIME'),
+      authorization,
     };
   }
 }

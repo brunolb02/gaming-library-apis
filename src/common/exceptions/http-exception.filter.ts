@@ -12,18 +12,19 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
+
     const message =
-      exception.response?.message ||
-      exception.message ||
+      exception?.response?.message ||
+      exception?.message ||
       'Internal server error';
-    let statusCode = exception.status || 500;
-    if (exception instanceof HttpException) {
-      statusCode = exception.getStatus();
-    }
+    const statusCode =
+      exception instanceof HttpException
+        ? exception.getStatus()
+        : exception?.status || 500;
 
     response.status(statusCode).json({
       path: request.url,
-      error: exception.getResponse()['error'] || message,
+      error: exception?.response?.error || message,
       message: message.toString().toLowerCase(),
       timestamp: new Date().getTime(),
       status: statusCode,

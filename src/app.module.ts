@@ -8,32 +8,19 @@ import { PlayingGamesModule } from './modules/playing-games/playing-games.module
 import appConfig from './app.config';
 import logger from './app.logger';
 import { PrismaModule } from './modules/prisma/prisma.module';
-import { PassportModule } from '@nestjs/passport';
-import { JwtModule } from '@nestjs/jwt';
-import { ConfigService } from '@nestjs/config';
+import { UsersModule } from './modules/users/users.module';
 
 @Module({
   imports: [
     appConfig,
     logger,
     PrismaModule,
-    PassportModule,
-    JwtModule.registerAsync({
-      useFactory: (config: ConfigService) => {
-        return {
-          secret: config.get<string>('JWT_SECRET_KEY'),
-          signOptions: {
-            expiresIn: config.get<string>('JWT_EXPIRATION_TIME'),
-          },
-        };
-      },
-      inject: [ConfigService],
-    }),
     AuthModule,
     CompletedGamesModule,
     GamesModule,
     PendingGamesModule,
     PlayingGamesModule,
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [],
