@@ -1,7 +1,6 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
-import { AuthEntity } from './entities/auth.entity';
+import { ApiTags } from '@nestjs/swagger';
 import { LoginDTO } from './dto/login.dto';
 import { CreateUserDTO } from '../users/dto/create-user.dto';
 
@@ -16,7 +15,6 @@ export class AuthController {
   }
 
   @Post('login')
-  @ApiOkResponse({ type: AuthEntity })
   async login(@Body() loginDTO: LoginDTO) {
     return await this.authService.login(loginDTO);
   }

@@ -1,11 +1,11 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { AuthEntity } from './entities/auth.entity';
 import { UsersService } from '../users/users.service';
 import { CreateUserDTO } from '../users/dto/create-user.dto';
 import { LoginDTO } from './dto/login.dto';
 import { JwtPayload } from './jwt.strategy';
 import { ConfigService } from '@nestjs/config';
+import { User } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
@@ -25,22 +25,20 @@ export class AuthService {
     }
   }
 
-  async login(loginDTO: LoginDTO): Promise<AuthEntity> {
+  async login(loginDTO: LoginDTO): Promise<string> {
     const user = await this.usersService.findByLogin(loginDTO);
 
     if (!user) {
       throw new HttpException('user_not_found', HttpStatus.NOT_FOUND);
     }
 
-    const accessToken = this.generateAccessToken(user);
-
-    return {
-      ...accessToken,
-      data: user,
-    };
+    return this.jwtService.sign({
+      id: user.id,
+      email: loginDTO.email,
+    });
   }
 
-  async validateUser(payload: JwtPayload): Promise<any> {
+  async validateUser(payload: JwtPayload): Promise<User> {
     const user = await this.usersService.findByPayload(payload);
 
     if (!user) {
@@ -48,15 +46,5 @@ export class AuthService {
     }
 
     return user;
-  }
-
-  private generateAccessToken({ email }): any {
-    const user: JwtPayload = { email };
-    const authorization = this.jwtService.sign(user);
-
-    return {
-      expiresIn: this.configService.getOrThrow('JWT_EXPIRATION_TIME'),
-      authorization,
-    };
   }
 }

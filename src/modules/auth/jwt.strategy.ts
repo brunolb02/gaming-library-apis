@@ -3,6 +3,7 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { AuthService } from './auth.service';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { User } from '@prisma/client';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -10,7 +11,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     private readonly authService: AuthService,
     private configService: ConfigService,
   ) {
-    // ! Check how to access injected services from inside the class constructor
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: true,
@@ -18,7 +18,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(payload: JwtPayload): Promise<any> {
+  async validate(payload: JwtPayload): Promise<User> {
     const user = await this.authService.validateUser(payload);
     if (!user) {
       throw new HttpException('invalid_token', HttpStatus.UNAUTHORIZED);

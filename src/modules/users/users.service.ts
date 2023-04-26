@@ -75,7 +75,7 @@ export class UsersService {
     return rest;
   }
 
-  async findByPayload({ email }: any): Promise<any> {
+  async findByPayload({ email }: any): Promise<User> {
     return await this.prisma.user.findFirst({
       where: { email },
     });
