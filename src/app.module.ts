@@ -7,16 +7,20 @@ import { PendingGamesModule } from './modules/pending-games/pending-games.module
 import { PlayingGamesModule } from './modules/playing-games/playing-games.module';
 import appConfig from './app.config';
 import logger from './app.logger';
+import { PrismaModule } from './modules/prisma/prisma.module';
+import { UsersModule } from './modules/users/users.module';
 
 @Module({
   imports: [
     appConfig,
     logger,
+    PrismaModule,
     AuthModule,
     CompletedGamesModule,
     GamesModule,
     PendingGamesModule,
     PlayingGamesModule,
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [],

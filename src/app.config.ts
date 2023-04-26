@@ -11,6 +11,8 @@ const configValidationSchema = {
   POSTGRES_USERNAME: Joi.string(),
   POSTGRES_PASSWORD: Joi.string(),
   POSTGRES_DB: Joi.string().default('gamingLibrary'),
+  JWT_SECRET_KEY: Joi.string(),
+  JWT_EXPIRATION_TIME: Joi.string(),
 };
 
 export default ConfigModule.forRoot({
