@@ -9,7 +9,8 @@ import appConfig from './app.config';
 import logger from './app.logger';
 import { PrismaModule } from './modules/prisma/prisma.module';
 import { UsersModule } from './modules/users/users.module';
-import { GamespotModule } from './modules/gamespot/gamespot.module';
+import { GamespotModule } from './modules/external/gamespot/gamespot.module';
+import { RawgModule } from './modules/external/rawg/rawg.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { GamespotModule } from './modules/gamespot/gamespot.module';
     PlayingGamesModule,
     UsersModule,
     GamespotModule,
+    RawgModule,
   ],
   controllers: [AppController],
   providers: [],

@@ -1,11 +1,13 @@
 import { Module } from '@nestjs/common';
 import { GamesService } from './games.service';
 import { GamesController } from './games.controller';
-import { GamespotModule } from '../gamespot/gamespot.module';
+import { GamespotModule } from '../external/gamespot/gamespot.module';
+import { RawgModule } from '../external/rawg/rawg.module';
+import { HowLongToBeatService } from 'howlongtobeat';
 
 @Module({
-  imports: [GamespotModule],
+  imports: [GamespotModule, RawgModule],
   controllers: [GamesController],
-  providers: [GamesService],
+  providers: [GamesService, HowLongToBeatService],
 })
 export class GamesModule {}

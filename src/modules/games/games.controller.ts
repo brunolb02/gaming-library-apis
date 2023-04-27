@@ -13,6 +13,10 @@ export class GamesController {
   @UseGuards(JwtAuthGuard)
   @Get('search')
   async search(@Query() searchGameDTO: SearchGameDTO) {
-    return await this.gamesService.search(searchGameDTO.name);
+    return await this.gamesService.search(
+      searchGameDTO.name,
+      searchGameDTO.page,
+      searchGameDTO.limit,
+    );
   }
 }

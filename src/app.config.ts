@@ -17,6 +17,8 @@ const configValidationSchema = {
   HTTP_MAX_REDIRECTS: Joi.number(),
   GAMESPOT_API_BASE_URL: Joi.string(),
   GAMESPOT_API_KEY: Joi.string(),
+  RAWG_API_BASE_URL: Joi.string(),
+  RAWG_API_KEY: Joi.string(),
 };
 
 export default ConfigModule.forRoot({

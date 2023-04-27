@@ -11,7 +11,9 @@ export class GamespotService {
     private configService: ConfigService,
   ) {}
 
-  async fetchGamesFromGamespotAPI(name: string): Promise<IGamesFromGamespot[]> {
+  async fetchGamesListFromGamespotAPI(
+    name: string,
+  ): Promise<IGamesFromGamespot[]> {
     try {
       const gamesFromGamespot = await lastValueFrom(
         this.httpService
@@ -38,6 +40,35 @@ export class GamespotService {
       );
 
       return gamesFromGamespot;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async fetchGameFromGamespotAPI(gameId: number): Promise<IGamesFromGamespot> {
+    try {
+      const gameFromGamespot = await lastValueFrom(
+        this.httpService
+          .get(
+            `/api/games/?api_key=${this.configService.getOrThrow(
+              'GAMESPOT_API_KEY',
+            )}&format=json&filter=id:${gameId}`,
+          )
+          .pipe(
+            map((response) => {
+              const game = response.data.results[0];
+              return {
+                id: game.id,
+                name: game.name,
+                description: game.description,
+                releaseDate: game.release_date,
+                imageUrl: game.image.original,
+              };
+            }),
+          ),
+      );
+
+      return gameFromGamespot;
     } catch (error) {
       throw error;
     }
