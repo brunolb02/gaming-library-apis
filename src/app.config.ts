@@ -13,6 +13,12 @@ const configValidationSchema = {
   POSTGRES_DB: Joi.string().default('gamingLibrary'),
   JWT_SECRET_KEY: Joi.string(),
   JWT_EXPIRATION_TIME: Joi.string(),
+  HTTP_TIMEOUT: Joi.number(),
+  HTTP_MAX_REDIRECTS: Joi.number(),
+  GAMESPOT_API_BASE_URL: Joi.string(),
+  GAMESPOT_API_KEY: Joi.string(),
+  RAWG_API_BASE_URL: Joi.string(),
+  RAWG_API_KEY: Joi.string(),
 };
 
 export default ConfigModule.forRoot({

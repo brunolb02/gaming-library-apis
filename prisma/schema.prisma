@@ -31,7 +31,7 @@ model CompletedGames {
   imageUrl        String   @default("default.png") @map("image_url") @db.VarChar()
   releaseDate     DateTime @map("release_date") @db.Timestamptz(3)
   completedDate   DateTime @default(now()) @map("completed_date") @db.Timestamptz(3)
-  metacriticScore String   @default("n/a") @map("metacritic_score") @db.VarChar(10)
+  metacriticScore Int      @default(0) @map("metacritic_score")             
   userScore       String   @map("user_score") @db.VarChar(10)
   totalTimeToBeat Int      @default(0) @map("total_time_to_beat") @db.Integer()
   rank            Int      @db.Integer()
@@ -51,8 +51,9 @@ model PlayingGames {
   description     String   @db.VarChar()
   imageUrl        String   @default("default.png") @map("image_url") @db.VarChar()
   releaseDate     DateTime @map("release_date") @db.Timestamptz(3)
-  metacriticScore String   @default("n/a") @map("metacritic_score") @db.VarChar(10)
+  metacriticScore Int      @default(0) @map("metacritic_score")
   timeToBeat      Json     @map("time_to_beat")
+  platforms       String[] @default([])
   startDate       DateTime @map("start_date") @db.Timestamptz(3)
 
   User User @relation(fields: [userId], references: [id])
@@ -69,8 +70,9 @@ model PendingGames {
   description     String   @db.VarChar()
   imageUrl        String   @default("default.png") @map("image_url") @db.VarChar()
   releaseDate     DateTime @map("release_date") @db.Timestamptz(3)
-  metacriticScore String   @default("n/a") @map("metacritic_score") @db.VarChar(10)
+  metacriticScore Int      @default(0) @map("metacritic_score")
   timeToBeat      Json     @map("time_to_beat")
+  platforms       String[] @default([])
 
   User User @relation(fields: [userId], references: [id])
 
