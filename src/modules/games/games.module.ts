@@ -9,5 +9,6 @@ import { HowLongToBeatService } from 'howlongtobeat';
   imports: [GamespotModule, RawgModule],
   controllers: [GamesController],
   providers: [GamesService, HowLongToBeatService],
+  exports: [GamesService],
 })
 export class GamesModule {}

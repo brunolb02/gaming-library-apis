@@ -26,11 +26,11 @@ export class GamespotService {
             map((response) => {
               const games = response.data.results.map((game) => {
                 return {
-                  id: game.id,
-                  name: game.name,
-                  description: game.description,
-                  releaseDate: game.release_date,
-                  imageUrl: game.image.original,
+                  id: game?.id,
+                  name: game?.name,
+                  description: game?.description,
+                  releaseDate: game?.release_date,
+                  imageUrl: game?.image?.original,
                 };
               });
 
@@ -45,14 +45,16 @@ export class GamespotService {
     }
   }
 
-  async fetchGameFromGamespotAPI(gameId: number): Promise<IGamesFromGamespot> {
+  async fetchGameFromGamespotAPI(
+    gamespotId: number,
+  ): Promise<IGamesFromGamespot> {
     try {
       const gameFromGamespot = await lastValueFrom(
         this.httpService
           .get(
             `/api/games/?api_key=${this.configService.getOrThrow(
               'GAMESPOT_API_KEY',
-            )}&format=json&filter=id:${gameId}`,
+            )}&format=json&filter=id:${gamespotId}`,
           )
           .pipe(
             map((response) => {
