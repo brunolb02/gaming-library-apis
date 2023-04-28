@@ -65,9 +65,13 @@ export class UsersService {
       where: { email: loginDTO.email },
     });
 
+    if (!user) {
+      throw new HttpException('invalid_credentials', HttpStatus.UNAUTHORIZED);
+    }
+
     const areEqual = await compare(loginDTO.password, user.password);
 
-    if (!user || !areEqual) {
+    if (!areEqual) {
       throw new HttpException('invalid_credentials', HttpStatus.UNAUTHORIZED);
     }
 
