@@ -33,7 +33,7 @@ model CompletedGames {
   releaseDate     DateTime @map("release_date") @db.Date
   completedDate   DateTime @default(now()) @map("completed_date") @db.Date
   metacriticScore Int      @default(0) @map("metacritic_score")
-  userScore       String   @map("user_score") @db.VarChar(10)
+  userScore       Int      @default(0) @map("user_score")
   totalTimeToBeat Int      @default(0) @map("total_time_to_beat") @db.Integer()
   rank            Int      @db.Integer()
   review          String   @db.VarChar()

@@ -17,6 +17,7 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 import { SearchGameDTO } from '../games/dto/search-game.dto';
 import { UpdatePlayingGameDTO } from './dto/update-playing-game.dto';
+import { AddCompletedGameDTO } from '../completed-games/dto/add-completed-game.dto';
 
 @Controller('playing-games')
 @ApiTags('playing-games')
@@ -70,7 +71,15 @@ export class PlayingGamesController {
 
   @UseGuards(JwtAuthGuard)
   @Post(':id/upgrade-to-completed')
-  async upgradeToCompleted(@Request() req, @Param('id') id: number) {
-    return;
+  async upgradeToCompleted(
+    @Request() req,
+    @Param('id') id: number,
+    @Body() addCompletedGameDTO: AddCompletedGameDTO,
+  ) {
+    return await this.playingGamesService.upgradeToCompleted(
+      id,
+      req.user.id,
+      addCompletedGameDTO,
+    );
   }
 }

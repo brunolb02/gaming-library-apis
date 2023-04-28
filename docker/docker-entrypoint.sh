@@ -8,7 +8,7 @@ yarn install --network-concurrency 1
 npx prisma generate
 # Create migrations from Prisma schema, apply them to the database, generate artifacts
 npx prisma migrate dev
-# npx prisma migrate dev --name update_datetime
+# npx prisma migrate dev --name update_userScore
 # npx prisma migrate deploy
 # Start the API server on development mode
 yarn run start:dev

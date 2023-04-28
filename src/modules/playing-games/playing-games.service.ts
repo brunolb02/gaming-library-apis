@@ -2,15 +2,18 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { AddPlayingGameDTO } from './dto/add-playing-game.dto';
 import { GamesService } from '../games/games.service';
 import { PrismaService } from '../prisma/prisma.service';
-import { PlayingGames, Prisma } from '@prisma/client';
+import { CompletedGames, PlayingGames, Prisma } from '@prisma/client';
 import { ListGamesDTO } from '../games/dto/list-games.dto';
 import { UpdatePlayingGameDTO } from './dto/update-playing-game.dto';
+import { AddCompletedGameDTO } from '../completed-games/dto/add-completed-game.dto';
+import { CompletedGamesService } from '../completed-games/completed-games.service';
 
 @Injectable()
 export class PlayingGamesService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly gamesService: GamesService,
+    private readonly completedGamesService: CompletedGamesService,
   ) {}
 
   async add(
@@ -151,5 +154,24 @@ export class PlayingGamesService {
     await this.prisma.playingGames.delete({
       where: { id: playingGame.id },
     });
+  }
+
+  async upgradeToCompleted(
+    id: number,
+    userId: number,
+    addCompletedGameDTO: AddCompletedGameDTO,
+  ): Promise<CompletedGames> {
+    const playingGame = await this.find(id, userId);
+
+    const addAsCompleted = await this.completedGamesService.add(
+      playingGame.userId,
+      addCompletedGameDTO,
+    );
+
+    await this.prisma.playingGames.delete({
+      where: { id: playingGame.id },
+    });
+
+    return addAsCompleted;
   }
 }
