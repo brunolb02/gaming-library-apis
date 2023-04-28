@@ -5,7 +5,7 @@ import { ListGamesDTO } from './dto/list-games.dto';
 import { RawgService } from '../external/rawg/rawg.service';
 import { GameDTO } from './dto/game.dto';
 import { HowLongToBeatService } from 'howlongtobeat';
-import { TimeToBeatAndPlatformsDTO } from './dto/timeToBeat-and-platforms.dto';
+import { TimeToBeatAndPlatformsDTO } from './dto/time-to-beat-and-platforms.dto';
 
 @Injectable()
 export class GamesService {
@@ -16,7 +16,7 @@ export class GamesService {
     private configService: ConfigService,
   ) {}
 
-  async search(name: string, page = 1, limit = 10): Promise<ListGamesDTO> {
+  async search(name: string, page = 1, limit = 50): Promise<ListGamesDTO> {
     const gamesFromGamespot =
       await this.gamespotService.fetchGamesListFromGamespotAPI(name);
 
@@ -38,15 +38,15 @@ export class GamesService {
     );
   }
 
-  async searchSpecific(id: number): Promise<GameDTO> {
+  async searchSpecific(gamespotId: number): Promise<GameDTO> {
     const { name, description, releaseDate, imageUrl } =
-      await this.gamespotService.fetchGameFromGamespotAPI(id);
+      await this.gamespotService.fetchGameFromGamespotAPI(gamespotId);
 
     const metacriticScoreFromRawg =
       (await this.rawgService.fetchMetacriticScoreByNameFromRawgAPI(name)) || 0;
 
     return {
-      id,
+      gamespotId,
       name,
       description,
       releaseDate,

@@ -26,13 +26,14 @@ model CompletedGames {
   createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
   updatedAt       DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
   userId          Int      @map("user_id")
+  gamespotId      Int      @map("gamespot_id")
   name            String   @db.VarChar(256)
   description     String   @db.VarChar()
   imageUrl        String   @default("default.png") @map("image_url") @db.VarChar()
-  releaseDate     DateTime @map("release_date") @db.Timestamptz(3)
-  completedDate   DateTime @default(now()) @map("completed_date") @db.Timestamptz(3)
-  metacriticScore Int      @default(0) @map("metacritic_score")             
-  userScore       String   @map("user_score") @db.VarChar(10)
+  releaseDate     DateTime @map("release_date") @db.Date
+  completedDate   DateTime @default(now()) @map("completed_date") @db.Date
+  metacriticScore Int      @default(0) @map("metacritic_score")
+  userScore       Int      @default(0) @map("user_score")
   totalTimeToBeat Int      @default(0) @map("total_time_to_beat") @db.Integer()
   rank            Int      @db.Integer()
   review          String   @db.VarChar()
@@ -47,14 +48,15 @@ model PlayingGames {
   createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
   updatedAt       DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
   userId          Int      @map("user_id")
+  gamespotId      Int      @map("gamespot_id")
   name            String   @db.VarChar(256)
   description     String   @db.VarChar()
   imageUrl        String   @default("default.png") @map("image_url") @db.VarChar()
-  releaseDate     DateTime @map("release_date") @db.Timestamptz(3)
+  releaseDate     DateTime @map("release_date") @db.Date
   metacriticScore Int      @default(0) @map("metacritic_score")
   timeToBeat      Json     @map("time_to_beat")
   platforms       String[] @default([])
-  startDate       DateTime @map("start_date") @db.Timestamptz(3)
+  startDate       DateTime @map("start_date") @db.Date
 
   User User @relation(fields: [userId], references: [id])
 
@@ -66,10 +68,11 @@ model PendingGames {
   createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
   updatedAt       DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
   userId          Int      @map("user_id")
+  gamespotId      Int      @map("gamespot_id")
   name            String   @db.VarChar(256)
   description     String   @db.VarChar()
   imageUrl        String   @default("default.png") @map("image_url") @db.VarChar()
-  releaseDate     DateTime @map("release_date") @db.Timestamptz(3)
+  releaseDate     DateTime @map("release_date") @db.Date
   metacriticScore Int      @default(0) @map("metacritic_score")
   timeToBeat      Json     @map("time_to_beat")
   platforms       String[] @default([])

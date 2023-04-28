@@ -3,5 +3,5 @@ export interface IGamesFromGamespot {
   name: string;
   description: string;
   imageUrl: string;
-  releaseDate: string;
+  releaseDate: Date;
 }
