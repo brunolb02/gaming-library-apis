@@ -127,7 +127,7 @@ export class PlayingGamesService {
     id: number,
     userId: number,
     updatePlayingGameDTO: UpdatePlayingGameDTO,
-  ) {
+  ): Promise<PlayingGames> {
     const playingGame = await this.find(id, userId);
 
     return await this.prisma.playingGames.update({
