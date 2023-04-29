@@ -11,7 +11,7 @@ async function bootstrap() {
 
   const configService = app.get(ConfigService);
 
-  app.setGlobalPrefix('/v1/games');
+  app.setGlobalPrefix('/v1');
 
   app.useGlobalPipes(new ValidationPipe({ whitelist: false, transform: true }));
   app.useGlobalFilters(new HttpExceptionFilter());

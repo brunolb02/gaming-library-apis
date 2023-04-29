@@ -1,45 +1,85 @@
 import {
   Controller,
-  Get,
   Post,
   Body,
-  Patch,
+  Request,
+  UseGuards,
+  Get,
+  Query,
   Param,
+  Patch,
   Delete,
+  HttpCode,
 } from '@nestjs/common';
 import { PlayingGamesService } from './playing-games.service';
-import { CreatePlayingGameDto } from './dto/create-playing-game.dto';
-import { UpdatePlayingGameDto } from './dto/update-playing-game.dto';
+import { AddPlayingGameDTO } from './dto/add-playing-game.dto';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
+import { SearchGameDTO } from '../games/dto/search-game.dto';
+import { UpdatePlayingGameDTO } from './dto/update-playing-game.dto';
+import { AddCompletedGameDTO } from '../completed-games/dto/add-completed-game.dto';
 
 @Controller('playing-games')
+@ApiTags('playing-games')
+@ApiBearerAuth()
 export class PlayingGamesController {
   constructor(private readonly playingGamesService: PlayingGamesService) {}
 
-  @Post()
-  create(@Body() createPlayingGameDto: CreatePlayingGameDto) {
-    return this.playingGamesService.create(createPlayingGameDto);
+  @UseGuards(JwtAuthGuard)
+  @Post('add')
+  async add(@Request() req, @Body() addPlayingGameDTO: AddPlayingGameDTO) {
+    return this.playingGamesService.add(req.user.id, addPlayingGameDTO);
   }
 
-  @Get()
-  findAll() {
-    return this.playingGamesService.findAll();
+  @UseGuards(JwtAuthGuard)
+  @Get('list')
+  async list(@Request() req, @Query() searchGameDTO: SearchGameDTO) {
+    return await this.playingGamesService.list(
+      req.user.id,
+      searchGameDTO.name,
+      searchGameDTO.page,
+      searchGameDTO.limit,
+    );
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.playingGamesService.findOne(+id);
+  @UseGuards(JwtAuthGuard)
+  @Get('find/:id')
+  async find(@Request() req, @Param('id') id: number) {
+    return await this.playingGamesService.find(id, req.user.id);
   }
 
-  @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updatePlayingGameDto: UpdatePlayingGameDto,
+  @UseGuards(JwtAuthGuard)
+  @Patch('edit/:id')
+  async update(
+    @Request() req,
+    @Param('id') id: number,
+    @Body() updatePlayingGameDTO: UpdatePlayingGameDTO,
   ) {
-    return this.playingGamesService.update(+id, updatePlayingGameDto);
+    return await this.playingGamesService.update(
+      id,
+      req.user.id,
+      updatePlayingGameDTO,
+    );
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.playingGamesService.remove(+id);
+  @UseGuards(JwtAuthGuard)
+  @Delete('remove/:id')
+  @HttpCode(204)
+  async delete(@Request() req, @Param('id') id: number) {
+    return await this.playingGamesService.delete(id, req.user.id);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post(':id/upgrade-to-completed')
+  async upgradeToCompleted(
+    @Request() req,
+    @Param('id') id: number,
+    @Body() addCompletedGameDTO: AddCompletedGameDTO,
+  ) {
+    return await this.playingGamesService.upgradeToCompleted(
+      id,
+      req.user.id,
+      addCompletedGameDTO,
+    );
   }
 }

@@ -1,26 +1,50 @@
-import { Injectable } from '@nestjs/common';
-import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { UsersService } from '../users/users.service';
+import { CreateUserDTO } from '../users/dto/create-user.dto';
+import { LoginDTO } from './dto/login.dto';
+import { JwtPayload } from './jwt.strategy';
+import { ConfigService } from '@nestjs/config';
+import { User } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
-  create(createAuthDto: CreateAuthDto) {
-    return 'This action adds a new auth';
+  constructor(
+    private usersService: UsersService,
+    private jwtService: JwtService,
+    private configService: ConfigService,
+  ) {}
+
+  async register(createUserDTO: CreateUserDTO): Promise<number> {
+    try {
+      await this.usersService.create(createUserDTO);
+
+      return HttpStatus.CREATED;
+    } catch (error) {
+      throw error;
+    }
   }
 
-  findAll() {
-    return `This action returns all auth`;
+  async login(loginDTO: LoginDTO): Promise<string> {
+    const user = await this.usersService.findByLogin(loginDTO);
+
+    if (!user) {
+      throw new HttpException('user_not_found', HttpStatus.NOT_FOUND);
+    }
+
+    return this.jwtService.sign({
+      id: user.id,
+      email: loginDTO.email,
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} auth`;
-  }
+  async validateUser(payload: JwtPayload): Promise<User> {
+    const user = await this.usersService.findByPayload(payload);
 
-  update(id: number, updateAuthDto: UpdateAuthDto) {
-    return `This action updates a #${id} auth`;
-  }
+    if (!user) {
+      throw new HttpException('invalid_token', HttpStatus.UNAUTHORIZED);
+    }
 
-  remove(id: number) {
-    return `This action removes a #${id} auth`;
+    return user;
   }
 }
