@@ -2,7 +2,7 @@ import { ConfigModule } from '@nestjs/config';
 import * as Joi from 'joi';
 
 const configValidationSchema = {
-  SERVICE_PORT: Joi.number().default(3000),
+  PORT: Joi.number(),
   ENVIRONMENT: Joi.string(),
   SWAGGER_USER: Joi.string(),
   SWAGGER_PASSWORD: Joi.string(),
