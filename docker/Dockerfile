@@ -16,6 +16,6 @@ RUN apk add git
 RUN yarn install --network-concurrency 1
 # RUN npx prisma generate
 RUN yarn build
-EXPOSE ${SERVICE_PORT}
+EXPOSE ${PORT}
 
 ENTRYPOINT ["sh", "/usr/src/app/docker-entrypoint.sh"]
